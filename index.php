@@ -23,23 +23,33 @@ function nextPassages($apiUrl, $paramsApi, $params, $start, $end, $type) {
             }
         }
     }
-    echo '<h4><i class="fas fa-bus"></i> '.$start.' vers '.$end.' <a href="'.$url.'"><i class="fas fa-link"></i></a></h4>';
+    echo '<br><h4><i class="fas fa-bus"></i> '.$start.' vers '.$end.' <a href="'.$url.'"><i class="fas fa-link"></i></a></h4>';
 
     $json = file_get_contents($url);
     if ($json) {
         $array = json_decode($json);
         if (isset($array->nhits) && $array->nhits != 0) {
             $times = [];
+            $now = time();
             foreach ($array->records as $record) {
-                $time = $record->fields->heureestimeedepart;
-                $time = substr($time,0,strlen($time)-6);
-                $time = substr($time,11);
-                $times[] = $time;
+                $time = strtotime($record->fields->heureestimeedepart);
+                $diff = null;
+                if ($now < $time) {
+                    $diff = round(($time - $now) / 60);
+                }
+                $times[] = [
+                    'time' => $time,
+                    'diff' => $diff
+                ];
             }
-            $times = array_reverse($times);
             echo '<ul class="list-group">';
             foreach ($times as $time) {
-                echo '<li class="list-group-item">'.$time.'</li>';
+                echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                echo date('H:i:s',$time['time']);
+                if (!is_null($time['diff'])) {
+                    echo '<span class="badge badge-success badge-pill">'.$time['diff'].' min</span>';
+                }
+                echo '</li>';
             }
             echo '</ul>';
         } else {
