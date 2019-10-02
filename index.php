@@ -5,7 +5,6 @@ $apiUrl = 'https://opendata.lillemetropole.fr/api/records/1.0/search/?';
 $paramsApi = [
     'dataset' => 'ilevia-prochainspassages',
     'rows' => '10',
-//    'sort' => 'heureestimeedepart',
     'timezone' => 'Europe%2FParis',
     'facet' => ['nomstation', 'codeligne', 'sensligne']
 ];
